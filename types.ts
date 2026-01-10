@@ -21,7 +21,10 @@ export interface Incident {
   category: string;
   resolvedBy: string;
   urgency: Urgency;
+  urgencyScore: number; // 1-10
   description: string;
+  status: 'open' | 'accepted' | 'on-scene' | 'resolved';
+  userText?: string;
 }
 
 export interface Volunteer {
@@ -29,6 +32,7 @@ export interface Volunteer {
   name: string;
   skills: string[];
   isAvailable: boolean;
+  status: 'idle' | 'busy' | 'en-route';
   location: { lat: number; lng: number };
   gender: 'female' | 'male' | 'non-binary';
   rating: number;
@@ -43,7 +47,7 @@ export interface SmsMessage {
 
 export interface PredictiveInsight {
   pattern: string;
-  risk: string;
+  risk: 'LOW' | 'MEDIUM' | 'HIGH';
   when: string;
   where: string;
   prevention: string;

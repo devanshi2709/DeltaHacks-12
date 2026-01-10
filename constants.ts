@@ -3,37 +3,30 @@ import { Incident, Urgency, Volunteer } from './types';
 
 export const MOCK_INCIDENTS: Incident[] = [
   {
-    id: '1',
+    id: '1042',
     type: 'unsafe_situation_reported',
-    location: { area: 'Beasley North', lat: 43.2570, lng: -79.8660 },
-    time: '22:30',
+    location: { area: 'Main & Jackson', lat: 43.2557, lng: -79.8711 },
+    time: '22:41',
     dayOfWeek: 'Friday',
-    category: 'harassment',
-    resolvedBy: 'safety_escort',
-    urgency: Urgency.MEDIUM,
-    description: 'User reported being followed while walking from Main St.'
+    category: 'FOLLOWED',
+    resolvedBy: '',
+    urgency: Urgency.HIGH,
+    urgencyScore: 9,
+    description: 'someone behind me for 2 blocks',
+    status: 'open'
   },
   {
-    id: '2',
+    id: '1043',
     type: 'unsafe_situation_reported',
-    location: { area: 'Jackson Square', lat: 43.2575, lng: -79.8700 },
-    time: '19:15',
-    dayOfWeek: 'Monday',
-    category: 'suspicious_activity',
-    resolvedBy: 'peer_buddy',
-    urgency: Urgency.LOW,
-    description: 'Suspicious individual loitering near the bus terminal.'
-  },
-  {
-    id: '3',
-    type: 'crisis_intervention',
-    location: { area: 'Main St & James', lat: 43.2555, lng: -79.8715 },
-    time: '01:45',
-    dayOfWeek: 'Saturday',
-    category: 'harassment',
-    resolvedBy: 'emergency_volunteer',
-    urgency: Urgency.CRITICAL,
-    description: 'Multiple reports of harassment near bar closing.'
+    location: { area: 'King & James', lat: 43.2575, lng: -79.8700 },
+    time: '23:10',
+    dayOfWeek: 'Friday',
+    category: 'ESCORT REQUEST',
+    resolvedBy: 'Sarah M.',
+    urgency: Urgency.MEDIUM,
+    urgencyScore: 6,
+    description: 'Walking home from campus, feel uneasy.',
+    status: 'accepted'
   }
 ];
 
@@ -43,6 +36,7 @@ export const MOCK_VOLUNTEERS: Volunteer[] = [
     name: 'Sarah M.',
     skills: ['de-escalation', 'first-aid'],
     isAvailable: true,
+    status: 'busy',
     location: { lat: 43.2560, lng: -79.8680 },
     gender: 'female',
     rating: 4.9
@@ -52,6 +46,7 @@ export const MOCK_VOLUNTEERS: Volunteer[] = [
     name: 'Maria R.',
     skills: ['crisis-counseling'],
     isAvailable: true,
+    status: 'idle',
     location: { lat: 43.2580, lng: -79.8695 },
     gender: 'female',
     rating: 5.0
@@ -60,7 +55,8 @@ export const MOCK_VOLUNTEERS: Volunteer[] = [
     id: 'v3',
     name: 'Jessica T.',
     skills: ['legal-advocacy'],
-    isAvailable: false,
+    isAvailable: true,
+    status: 'idle',
     location: { lat: 43.2550, lng: -79.8720 },
     gender: 'female',
     rating: 4.8
@@ -68,9 +64,9 @@ export const MOCK_VOLUNTEERS: Volunteer[] = [
 ];
 
 export const APP_THEME = {
-  primary: '#7c3aed', // Purple
-  secondary: '#db2777', // Pink
-  accent: '#f43f5e', // Rose
+  primary: '#7c3aed', 
+  secondary: '#db2777',
+  accent: '#f43f5e',
   background: '#f8fafc',
   text: '#1e293b'
 };
