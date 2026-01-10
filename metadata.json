@@ -1,0 +1,9 @@
+
+{
+  "name": "SafetyNet HER",
+  "description": "AI-Powered Prevention Network for Women's Safety. Predicting and preventing dangerous situations before they escalate to emergencies.",
+  "requestFramePermissions": [
+    "geolocation",
+    "microphone"
+  ]
+}

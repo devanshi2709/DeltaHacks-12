@@ -1,0 +1,22 @@
+# SafetyNet HER - API & Integration Documentation
+
+## 1. Google Gemini API (GenAI)
+The "Brain" of the application. Used for:
+- SMS Urgency Analysis: Categorizing user stress and risk levels in real-time.
+- Predictive Pattern Detection: Analyzing historical data to forecast high-risk windows in the Beasley neighborhood.
+
+Model used: 'gemini-3-flash-preview' (for speed) and 'gemini-3-pro-preview' (for reasoning).
+
+## 2. ElevenLabs (Concept/Future)
+The "Voice" of the application.
+Used for the "Fake Out" feature (Scenario: User needs an excuse to leave a creepy situation).
+- Script: "Hey! Oh my god, I've been trying to reach you! There's a family emergency..."
+
+## 3. Geolocation API
+The app requests 'geolocation' permission in metadata.json.
+- Used to track user position during "Followed Mode".
+- Used to identify the nearest "Safe Haven" (businesses vetted for women's safety).
+
+## 4. Microphone API
+Requested for "Evidence Collection" mode.
+- Used to record and stream audio/video directly to the mesh cloud so it cannot be deleted by a perpetrator.
