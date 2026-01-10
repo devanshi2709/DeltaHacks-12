@@ -1,6 +1,6 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { Incident } from "../types";
+import { Incident } from "./types";
 
 // Always use const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
@@ -41,12 +41,43 @@ export const analyzeSmsUrgency = async (text: string) => {
 
 export const getPredictiveInsights = async (incidents: Incident[]) => {
   try {
-    const prompt = `Based on the following historical safety incidents in the Beasley neighborhood, identify patterns and suggest proactive prevention strategies for women's safety.
-    
-    Incidents: ${JSON.stringify(incidents)}
-    
-    Respond in JSON format as an array of patterns:
-    [{ "pattern": string, "risk": string, "when": string, "where": string, "prevention": string }]`;
+    const prompt = `
+You are an AI system analyzing historical women's safety incidents to support prevention and volunteer deployment.
+
+Your goal is to identify REPEATING and DATA-SUPPORTED risk patterns.
+
+Instructions:
+- Only report patterns clearly supported by the data
+- Focus on time, location, and incident-type clustering
+- Highlight risks that can be acted on proactively
+- Do NOT invent patterns without evidence
+
+Incident data:
+${JSON.stringify(incidents)}
+
+Return an ARRAY of JSON objects with the following structure:
+
+{
+  "pattern": string,
+  "risk_level": "low | medium | high",
+  "confidence": number (0–1),
+  "time_window": string,
+  "location": string,
+  "incident_types": string[],
+  "evidence": string,
+  "recommended_prevention": string,
+  "system_action": string
+}
+
+Rules:
+- Confidence reflects pattern strength in the data
+- Risk level must align with incident frequency and severity
+- System action must be operational (e.g. "deploy 2 volunteers")
+- Keep explanations concise and factual
+
+Respond ONLY with valid JSON.
+`;
+
 
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
@@ -58,13 +89,22 @@ export const getPredictiveInsights = async (incidents: Incident[]) => {
           items: {
             type: Type.OBJECT,
             properties: {
-              pattern: { type: Type.STRING },
-              risk: { type: Type.STRING },
-              when: { type: Type.STRING },
-              where: { type: Type.STRING },
-              prevention: { type: Type.STRING }
+            urgency: { type: Type.NUMBER },
+            category: { type: Type.STRING },
+            sentiment: { type: Type.STRING },
+            recommended_action: { type: Type.STRING },
+            language: { type: Type.STRING },
+            confidence: { type: Type.NUMBER },
+            empathetic_response: { type: Type.STRING },
+            reasoning: { type: Type.STRING }
             },
-            required: ["pattern", "risk", "when", "where", "prevention"]
+            required: ["urgency",
+            "category",
+            "sentiment",
+            "recommended_action",
+            "language",
+            "empathetic_response",
+            "reasoning"]
           }
         }
       }

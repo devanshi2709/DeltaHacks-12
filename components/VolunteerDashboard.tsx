@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { MOCK_INCIDENTS, MOCK_VOLUNTEERS } from '../constants';
-import { Urgency } from '../types';
+import { Urgency } from '@/services/types';
 import PredictiveLayer from './PredictiveLayer';
 
 const VolunteerDashboard: React.FC = () => {

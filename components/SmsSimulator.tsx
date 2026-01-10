@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { analyzeSmsUrgency } from '../services/geminiService';
-import { SmsMessage } from '../types';
+import { SmsMessage } from '@/services/types';
 
 interface SmsSimulatorProps {
   onIncidentTriggered: (details: any) => void;

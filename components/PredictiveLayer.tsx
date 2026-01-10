@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { getPredictiveInsights } from '../services/geminiService';
 import { MOCK_INCIDENTS } from '../constants';
-import { PredictiveInsight } from '../types';
+import { PredictiveInsight } from '@/services/types';
 
 const PredictiveLayer: React.FC = () => {
   const [insights, setInsights] = useState<PredictiveInsight[]>([]);
