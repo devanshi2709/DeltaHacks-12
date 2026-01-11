@@ -1,55 +1,104 @@
+import React, { useEffect, useRef, useState } from "react";
 
-import React, { useState, useEffect } from 'react';
-
-interface FakeCallProps {
+type Props = {
   onEnd: () => void;
-}
+};
 
-const FakeCall: React.FC<FakeCallProps> = ({ onEnd }) => {
-  const [timer, setTimer] = useState(0);
+const FakeCall: React.FC<Props> = ({ onEnd }) => {
+  const [status, setStatus] = useState<"ringing" | "playing" | "done" | "error">(
+    "ringing"
+  );
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    const interval = setInterval(() => setTimer(t => t + 1), 1000);
-    return () => clearInterval(interval);
-  }, []);
+    let cancelled = false;
 
-  const formatTime = (seconds: number) => {
-    const m = Math.floor(seconds / 60);
-    const s = seconds % 60;
-    return `${m}:${s.toString().padStart(2, '0')}`;
-  };
+    async function startCall() {
+      try {
+        setStatus("ringing");
+
+        // Small ring delay so it feels real (demo-friendly)
+        await new Promise((r) => setTimeout(r, 800));
+        if (cancelled) return;
+
+        const res = await fetch("http://localhost:3001/api/voice/fake-call", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text:
+              "Hey! Oh my god, I've been trying to reach you! " +
+              "There's a family emergency—you need to come home RIGHT NOW. " +
+              "No, it can't wait. I need you here in 20 minutes. Okay—see you soon. Hurry!",
+          }),
+        });
+
+        if (!res.ok) {
+          const txt = await res.text();
+          throw new Error(txt || `Backend error ${res.status}`);
+        }
+
+        const buf = await res.arrayBuffer();
+        const blob = new Blob([buf], { type: "audio/mpeg" });
+        const url = URL.createObjectURL(blob);
+
+        const audio = new Audio(url);
+        audioRef.current = audio;
+
+        setStatus("playing");
+        await audio.play();
+
+        audio.onended = () => {
+          URL.revokeObjectURL(url);
+          setStatus("done");
+          // End quickly for demo (no 45s wait)
+          setTimeout(onEnd, 600);
+        };
+      } catch (e) {
+        console.error(e);
+        setStatus("error");
+      }
+    }
+
+    startCall();
+
+    return () => {
+      cancelled = true;
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, [onEnd]);
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-      <div className="bg-zinc-900 w-full max-w-sm h-[600px] rounded-[3rem] shadow-2xl relative overflow-hidden flex flex-col p-8 text-white border-4 border-zinc-800">
-        <div className="text-center mt-20">
-          <div className="w-24 h-24 bg-gradient-to-br from-violet-500 to-pink-500 rounded-full mx-auto mb-6 flex items-center justify-center text-3xl font-bold shadow-lg shadow-violet-500/20">
-            S
-          </div>
-          <h2 className="text-2xl font-bold mb-1">SafetyNet HER</h2>
-          <p className="text-zinc-400 font-medium">Incoming Call...</p>
-          <p className="text-violet-400 text-lg font-mono mt-4">{formatTime(timer)}</p>
+    <div className="fixed inset-0 z-[300] bg-black/80 flex items-center justify-center p-6">
+      <div className="w-full max-w-sm rounded-3xl bg-zinc-950 border border-zinc-800 p-6 text-white shadow-2xl">
+        <div className="text-xs uppercase tracking-widest text-zinc-400 font-black">
+          Fake Call
         </div>
 
-        <div className="mt-auto mb-16 space-y-8">
-          <p className="text-center text-sm text-zinc-500 italic px-4">
-            "Hey! Oh my god, I've been trying to reach you! There's a family emergency, you need to come home right now..."
-          </p>
-          
-          <div className="flex justify-center gap-12">
-            <button 
-              onClick={onEnd}
-              className="w-16 h-16 bg-red-600 rounded-full flex items-center justify-center shadow-lg hover:bg-red-700 transition"
-            >
-              <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clipRule="evenodd" /></svg>
-            </button>
-            <div className="w-16 h-16 bg-zinc-800 rounded-full flex items-center justify-center">
-              <svg className="w-8 h-8 text-zinc-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" /></svg>
-            </div>
-          </div>
+        <div className="mt-3 text-2xl font-black">
+          {status === "ringing" && "📞 Incoming call…"}
+          {status === "playing" && "📞 Call in progress…"}
+          {status === "done" && "✅ Call ended"}
+          {status === "error" && "❌ Call failed"}
         </div>
 
-        <div className="absolute top-4 left-1/2 -translate-x-1/2 w-32 h-6 bg-black rounded-full"></div>
+        <div className="mt-4 text-sm text-zinc-400">
+          {status === "ringing" && "Hold on — generating voice…"}
+          {status === "playing" && "Stay calm. Use this as an excuse to leave."}
+          {status === "done" && "Are you safe now?"}
+          {status === "error" && "Check backend is running on :3001"}
+        </div>
+
+        <div className="mt-6 flex gap-3">
+          <button
+            onClick={onEnd}
+            className="flex-1 bg-zinc-900 hover:bg-zinc-800 border border-zinc-700 rounded-2xl py-3 font-black text-xs uppercase tracking-widest"
+          >
+            End
+          </button>
+        </div>
       </div>
     </div>
   );
