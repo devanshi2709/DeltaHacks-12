@@ -20,8 +20,8 @@ const FakeCall: React.FC<FakeCallProps> = ({ onEnd }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
-      <div className="bg-zinc-900 w-full max-w-sm h-[600px] rounded-[3rem] shadow-2xl relative overflow-hidden flex flex-col p-8 text-white border-4 border-zinc-800">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <div className="bg-zinc-900 w-full max-w-sm max-h-[90vh] rounded-[3rem] shadow-2xl relative overflow-hidden flex flex-col p-8 text-white border-4 border-zinc-800">
         <div className="text-center mt-20">
           <div className="w-24 h-24 bg-gradient-to-br from-violet-500 to-pink-500 rounded-full mx-auto mb-6 flex items-center justify-center text-3xl font-bold shadow-lg shadow-violet-500/20">
             S
