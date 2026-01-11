@@ -1,30 +1,22 @@
 # SafetyNet HER - API & Integration Documentation
 
-## 1. Google Gemini API (The Decision Engine)
+## 1. Google Gemini API (GenAI)
+The "Brain" of the application. Used for:
+- SMS Urgency Analysis: Categorizing user stress and risk levels in real-time.
+- Predictive Pattern Detection: Analyzing historical data to forecast high-risk windows in the Beasley neighborhood.
 
-We utilize the Gemini API to bridge the gap between "Raw Fear" and "Organized Response."
+Model used: 'gemini-3-flash-preview' (for speed) and 'gemini-3-pro-preview' (for reasoning).
 
-### A. Real-time Analysis (gemini-3-flash-preview)
-**Purpose:** Instant triage of distress signals.
-**Input:** Raw user text from SMS or App.
-**Output:** Structured JSON determining the scale of the community response.
-**Strategy:** Few-shot prompting to ensure the model distinguishes between "uncomfortable" (Wellness Check) and "imminent danger" (Emergency Dispatch).
+## 2. ElevenLabs (Concept/Future)
+The "Voice" of the application.
+Used for the "Fake Out" feature (Scenario: User needs an excuse to leave a creepy situation).
+- Script: "Hey! Oh my god, I've been trying to reach you! There's a family emergency..."
 
-### B. Pattern Analysis (gemini-3-pro-preview)
-**Purpose:** Neighborhood-scale proactive safety forecasting.
-**Input:** Batched incident logs (Time, Lat/Lng, Category).
-**Output:** Narrative patterns and specific prevention tactics (e.g., "Increase lighting at Sector 4").
+## 3. Geolocation API
+The app requests 'geolocation' permission in metadata.json.
+- Used to track user position during "Followed Mode".
+- Used to identify the nearest "Safe Haven" (businesses vetted for women's safety).
 
-## 2. MongoDB Geospatial API
-**Purpose:** Locating the "Nearest Neighbor."
-We use the `$near` operator on a 2dsphere index. This ensures that when a woman triggers an alert, the "Help" is coming from someone within a 2-5 minute walking radius, significantly beating 911 response times (avg 18m).
-
-## 3. Twilio Programmable SMS
-**Purpose:** Accessibility.
-SafetyNet HER is "SMS-First" because survivors in high-stress situations often cannot look at a screen or have low data. 
-- Incoming: `POST /api/sms/incoming`
-- Outgoing: Status updates for user reassurance.
-
-## 4. ElevenLabs TTS
-**Purpose:** The "Exit Strategy."
-By utilizing realistic, high-latency voices, the "Fake Call" feature creates a legitimate-sounding social excuse for women to leave uncomfortable settings (bars, dates, taxis) without escalating conflict.
+## 4. Microphone API
+Requested for "Evidence Collection" mode.
+- Used to record and stream audio/video directly to the mesh cloud so it cannot be deleted by a perpetrator.

@@ -1,90 +1,46 @@
-// constants.ts
-import { Incident, PredictiveInsight, Volunteer, Urgency } from "./services/types";
-
-//
-// INCIDENT MOCK DATA — New Schema (demo-friendly + predictable patterns)
-//
+import { Incident, Urgency, Volunteer } from "./services/types";
 
 export const MOCK_INCIDENTS: Incident[] = [
   {
-    id: '1042',
+    id: '1',
     type: 'unsafe_situation_reported',
-    location: { area: 'Main & Jackson', lat: 43.2557, lng: -79.8711 },
-    time: '22:41',
+    location: { area: 'Beasley North', lat: 43.2570, lng: -79.8660 },
+    time: '22:30',
     dayOfWeek: 'Friday',
-    category: 'FOLLOWED',
-    resolvedBy: '',
-    urgency: Urgency.HIGH,
-    urgencyScore: 9,
-    description: 'someone behind me for 2 blocks',
-    status: 'open'
-  },
-  {
-    id: '1043',
-    type: 'unsafe_situation_reported',
-    location: { area: 'King & James', lat: 43.2575, lng: -79.8700 },
-    time: '23:10',
-    dayOfWeek: 'Friday',
-    category: 'ESCORT REQUEST',
-    resolvedBy: 'Sarah M.',
+    category: 'harassment',
+    resolvedBy: 'safety_escort',
     urgency: Urgency.MEDIUM,
-    urgencyScore: 6,
-    description: 'Walking home from campus, feel uneasy.',
-    status: 'accepted'
-  },
-  {
-    id: '1044',
-    type: 'unsafe_situation_reported',
-    location: { area: 'Jackson Square', lat: 43.2569, lng: -79.8691 },
-    time: '22:55',
-    dayOfWeek: 'Friday',
-    category: 'HARASSMENT',
-    urgency: Urgency.HIGH,
-    urgencyScore: 8,
-    description: 'someone shouted obscene stuff while passing',
-    status: 'open'
-  },
-  {
-    id: '1045',
-    type: 'unsafe_situation_reported',
-    location: { area: 'Beasley North', lat: 43.2573, lng: -79.8683 },
-    time: '22:15',
-    dayOfWeek: 'Friday',
-    category: 'FOLLOWED',
-    urgency: Urgency.HIGH,
-    urgencyScore: 9,
-    description: 'guy waiting near bus stop stared for minutes',
-    status: 'open'
-  },
-  {
-    id: '1046',
-    type: 'unsafe_situation_reported',
-    location: { area: 'Main St & James', lat: 43.2571, lng: -79.8707 },
-    time: '01:30',
-    dayOfWeek: 'Saturday',
-    category: 'HARASSMENT',
-    urgency: Urgency.LOW,
-    urgencyScore: 3,
-    description: 'group yelling while bars closing',
+    urgencyScore: 5,
+    description: 'User reported being followed while walking from Main St.',
     status: 'resolved'
   },
   {
-    id: '1047',
+    id: '2',
     type: 'unsafe_situation_reported',
-    location: { area: 'Jackson Square', lat: 43.2569, lng: -79.8691 },
-    time: '19:05',
-    dayOfWeek: 'Wednesday',
-    category: 'SUSPICIOUS ACTIVITY',
-    urgency: Urgency.MEDIUM,
-    urgencyScore: 5,
-    description: 'someone pacing near bus terminal for 20 mins',
+    location: { area: 'Jackson Square', lat: 43.2575, lng: -79.8700 },
+    time: '19:15',
+    dayOfWeek: 'Monday',
+    category: 'suspicious_activity',
+    resolvedBy: 'peer_buddy',
+    urgency: Urgency.LOW,
+    urgencyScore: 2,
+    description: 'Suspicious individual loitering near the bus terminal.',
     status: 'open'
+  },
+  {
+    id: '3',
+    type: 'crisis_intervention',
+    location: { area: 'Main St & James', lat: 43.2555, lng: -79.8715 },
+    time: '01:45',
+    dayOfWeek: 'Saturday',
+    category: 'harassment',
+    resolvedBy: 'emergency_volunteer',
+    urgency: Urgency.CRITICAL,
+    urgencyScore: 10,
+    description: 'Multiple reports of harassment near bar closing.',
+    status: 'accepted'
   }
 ];
-
-//
-// VOLUNTEERS MOCK DATA — Matches UI + eventual geospatial logic
-//
 
 export const MOCK_VOLUNTEERS: Volunteer[] = [
   {
@@ -92,69 +48,37 @@ export const MOCK_VOLUNTEERS: Volunteer[] = [
     name: 'Sarah M.',
     skills: ['de-escalation', 'first-aid'],
     isAvailable: true,
-    status: 'busy',
     location: { lat: 43.2560, lng: -79.8680 },
     gender: 'female',
     rating: 4.9,
+    status: 'idle'
   },
   {
     id: 'v2',
     name: 'Maria R.',
     skills: ['crisis-counseling'],
     isAvailable: true,
-    status: 'idle',
     location: { lat: 43.2580, lng: -79.8695 },
     gender: 'female',
     rating: 5.0,
+    status: 'idle'
   },
   {
     id: 'v3',
     name: 'Jessica T.',
     skills: ['legal-advocacy'],
-    isAvailable: true,
-    status: 'idle',
+    isAvailable: false,
     location: { lat: 43.2550, lng: -79.8720 },
     gender: 'female',
     rating: 4.8,
+    status: 'offline'
   }
 ];
-
-//
-// PREDICTIVE INSIGHTS — Makes the dashboard look "smart" for judges
-//
-
-export const MOCK_PREDICTIVE_INSIGHTS: PredictiveInsight[] = [
-  {
-    pattern: 'Late-night harassment at Beasley North Bus Stop',
-    risk: 'High',
-    when: 'Fridays 9–11 PM',
-    where: 'Beasley North',
-    prevention: 'Dispatch 2 volunteers during peak hours, increase lighting in area.'
-  },
-  {
-    pattern: 'Suspicious activity at Jackson Square',
-    risk: 'Medium',
-    when: 'Weeknights 7–8 PM',
-    where: 'Jackson Square',
-    prevention: 'Assign monitoring volunteer and alert nearby users.'
-  },
-  {
-    pattern: 'Rising discomfort near Main St & James during bar closing',
-    risk: 'Low',
-    when: 'Saturday 1–2 AM',
-    where: 'Main St & James',
-    prevention: 'Volunteer check-ins recommended.'
-  }
-];
-
-//
-// THEME — UI cohesion (keeps aesthetic consistent)
-//
 
 export const APP_THEME = {
-  primary: '#7c3aed',
-  secondary: '#db2777',
-  accent: '#f43f5e',
+  primary: '#7c3aed', // Purple
+  secondary: '#db2777', // Pink
+  accent: '#f43f5e', // Rose
   background: '#f8fafc',
   text: '#1e293b'
 };
