@@ -1,29 +1,90 @@
 // constants.ts
 import { Incident, PredictiveInsight, Volunteer, Urgency } from "./services/types";
 
+//
+// INCIDENT MOCK DATA — New Schema (demo-friendly + predictable patterns)
+//
+
 export const MOCK_INCIDENTS: Incident[] = [
   {
-    id: '1',
-    type: 'harassment',
-    locationName: 'Beasley North',
-    time: '2026-01-06T22:30',
-    userMessage: 'User reported being followed while walking from Main St.',
+    id: '1042',
+    type: 'unsafe_situation_reported',
+    location: { area: 'Main & Jackson', lat: 43.2557, lng: -79.8711 },
+    time: '22:41',
+    dayOfWeek: 'Friday',
+    category: 'FOLLOWED',
+    resolvedBy: '',
+    urgency: Urgency.HIGH,
+    urgencyScore: 9,
+    description: 'someone behind me for 2 blocks',
+    status: 'open'
   },
   {
-    id: '2',
-    type: 'general_fear',
-    locationName: 'Jackson Square',
-    time: '2026-01-09T19:15',
-    userMessage: 'Suspicious individual loitering near the bus terminal.',
+    id: '1043',
+    type: 'unsafe_situation_reported',
+    location: { area: 'King & James', lat: 43.2575, lng: -79.8700 },
+    time: '23:10',
+    dayOfWeek: 'Friday',
+    category: 'ESCORT REQUEST',
+    resolvedBy: 'Sarah M.',
+    urgency: Urgency.MEDIUM,
+    urgencyScore: 6,
+    description: 'Walking home from campus, feel uneasy.',
+    status: 'accepted'
   },
   {
-    id: '3',
-    type: 'harassment',
-    locationName: 'Main St & James',
-    time: '2026-01-10T01:45',
-    userMessage: 'Multiple reports of harassment near bar closing.',
+    id: '1044',
+    type: 'unsafe_situation_reported',
+    location: { area: 'Jackson Square', lat: 43.2569, lng: -79.8691 },
+    time: '22:55',
+    dayOfWeek: 'Friday',
+    category: 'HARASSMENT',
+    urgency: Urgency.HIGH,
+    urgencyScore: 8,
+    description: 'someone shouted obscene stuff while passing',
+    status: 'open'
   },
+  {
+    id: '1045',
+    type: 'unsafe_situation_reported',
+    location: { area: 'Beasley North', lat: 43.2573, lng: -79.8683 },
+    time: '22:15',
+    dayOfWeek: 'Friday',
+    category: 'FOLLOWED',
+    urgency: Urgency.HIGH,
+    urgencyScore: 9,
+    description: 'guy waiting near bus stop stared for minutes',
+    status: 'open'
+  },
+  {
+    id: '1046',
+    type: 'unsafe_situation_reported',
+    location: { area: 'Main St & James', lat: 43.2571, lng: -79.8707 },
+    time: '01:30',
+    dayOfWeek: 'Saturday',
+    category: 'HARASSMENT',
+    urgency: Urgency.LOW,
+    urgencyScore: 3,
+    description: 'group yelling while bars closing',
+    status: 'resolved'
+  },
+  {
+    id: '1047',
+    type: 'unsafe_situation_reported',
+    location: { area: 'Jackson Square', lat: 43.2569, lng: -79.8691 },
+    time: '19:05',
+    dayOfWeek: 'Wednesday',
+    category: 'SUSPICIOUS ACTIVITY',
+    urgency: Urgency.MEDIUM,
+    urgencyScore: 5,
+    description: 'someone pacing near bus terminal for 20 mins',
+    status: 'open'
+  }
 ];
+
+//
+// VOLUNTEERS MOCK DATA — Matches UI + eventual geospatial logic
+//
 
 export const MOCK_VOLUNTEERS: Volunteer[] = [
   {
@@ -31,6 +92,7 @@ export const MOCK_VOLUNTEERS: Volunteer[] = [
     name: 'Sarah M.',
     skills: ['de-escalation', 'first-aid'],
     isAvailable: true,
+    status: 'busy',
     location: { lat: 43.2560, lng: -79.8680 },
     gender: 'female',
     rating: 4.9,
@@ -40,6 +102,7 @@ export const MOCK_VOLUNTEERS: Volunteer[] = [
     name: 'Maria R.',
     skills: ['crisis-counseling'],
     isAvailable: true,
+    status: 'idle',
     location: { lat: 43.2580, lng: -79.8695 },
     gender: 'female',
     rating: 5.0,
@@ -48,12 +111,17 @@ export const MOCK_VOLUNTEERS: Volunteer[] = [
     id: 'v3',
     name: 'Jessica T.',
     skills: ['legal-advocacy'],
-    isAvailable: false,
+    isAvailable: true,
+    status: 'idle',
     location: { lat: 43.2550, lng: -79.8720 },
     gender: 'female',
     rating: 4.8,
-  },
+  }
 ];
+
+//
+// PREDICTIVE INSIGHTS — Makes the dashboard look "smart" for judges
+//
 
 export const MOCK_PREDICTIVE_INSIGHTS: PredictiveInsight[] = [
   {
@@ -71,13 +139,17 @@ export const MOCK_PREDICTIVE_INSIGHTS: PredictiveInsight[] = [
     prevention: 'Assign monitoring volunteer and alert nearby users.'
   },
   {
-    pattern: 'Isolated harassment near Main St & James',
+    pattern: 'Rising discomfort near Main St & James during bar closing',
     risk: 'Low',
     when: 'Saturday 1–2 AM',
     where: 'Main St & James',
     prevention: 'Volunteer check-ins recommended.'
   }
 ];
+
+//
+// THEME — UI cohesion (keeps aesthetic consistent)
+//
 
 export const APP_THEME = {
   primary: '#7c3aed',

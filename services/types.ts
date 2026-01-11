@@ -1,12 +1,23 @@
 // types.ts
 
 export interface Incident {
-  id?: string;
-  type: "harassment" | "following" | "domestic_violence" | "general_fear";
-  time: string;            // ISO timestamp
-  locationName: string;    // human-readable location
-  userMessage?: string;
+  id: string;
+  type: string;
+  location: {
+    area: string;
+    lat: number;
+    lng: number;
+  };
+  time: string;
+  dayOfWeek: string;
+  category: string;
+  urgency: Urgency;
+  urgencyScore: number;
+  description: string;
+  resolvedBy?: string;
+  status: 'open' | 'accepted' | 'resolved';
 }
+
 
 export interface PredictiveInsight {
   pattern: string;        // short title
@@ -30,8 +41,9 @@ export interface Volunteer {
     lat: number;
     lng: number;
   };
-  gender: 'male' | 'female' | 'other';
+  gender: string;
   rating: number;
+  status: 'idle' | 'busy' | 'offline'; // <-- ADD THIS
 }
 export enum Urgency {
   LOW = 'low',
