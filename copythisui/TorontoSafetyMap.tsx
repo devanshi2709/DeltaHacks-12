@@ -24,15 +24,15 @@ const TorontoSafetyMap: React.FC = () => {
       </svg>
 
       {/* Heatmap Clusters around downtown */}
-      <div className="absolute top-[33%] left-[27%] w-56 h-56 bg-rose-600/28 rounded-full blur-[80px]"></div>
-      <div className="absolute top-[43%] left-[45%] w-76 h-76 bg-rose-500/22 rounded-full blur-[95px]"></div>
-      <div className="absolute top-[24%] left-[63%] w-42 h-42 bg-amber-400/22 rounded-full blur-[70px]"></div>
-      <div className="absolute top-[54%] left-[19%] w-50 h-50 bg-emerald-400/18 rounded-full blur-[80px]"></div>
+      <div className="absolute top-[33%] left-[27%] w-90 h-90 bg-rose-700/32 rounded-full blur-[130px]"></div>
+      <div className="absolute top-[43%] left-[45%] w-[110px] h-[110px] bg-orange-600/28 rounded-full blur-[140px]"></div>
+      <div className="absolute top-[24%] left-[63%] w-76 h-76 bg-red-700/30 rounded-full blur-[130px]"></div>
+      <div className="absolute top-[54%] left-[19%] w-88 h-88 bg-emerald-600/24 rounded-full blur-[130px]"></div>
 
       {/* Active Incident Markers */}
       <div className="absolute top-[34%] left-[30%] group/marker">
-        <div className="w-3 h-3 bg-rose-500 rounded-full ring-4 ring-rose-500/20 animate-ping absolute"></div>
-        <div className="w-3 h-3 bg-rose-500 rounded-full ring-4 ring-rose-500/20 relative"></div>
+        <div className="w-3 h-3 bg-white rounded-full ring-4 ring-white/30 animate-ping absolute"></div>
+        <div className="w-3 h-3 bg-white rounded-full ring-4 ring-white/30 relative"></div>
         <div className="absolute left-6 top-1/2 -translate-y-1/2 bg-slate-900 border border-slate-700 px-3 py-1 rounded-lg opacity-0 group-hover/marker:opacity-100 transition-opacity whitespace-nowrap z-10">
           <p className="text-[10px] font-black text-rose-500">URG 9: STALKING</p>
           <p className="text-[8px] text-white">Queen & Spadina</p>
@@ -40,7 +40,7 @@ const TorontoSafetyMap: React.FC = () => {
       </div>
 
       <div className="absolute top-[48%] left-[48%] group/marker">
-        <div className="w-3 h-3 bg-violet-500 rounded-full ring-4 ring-violet-500/20 relative"></div>
+        <div className="w-3 h-3 bg-white rounded-full ring-4 ring-white/30 relative"></div>
         <div className="absolute left-6 top-1/2 -translate-y-1/2 bg-slate-900 border border-slate-700 px-3 py-1 rounded-lg opacity-0 group-hover/marker:opacity-100 transition-opacity whitespace-nowrap z-10">
           <p className="text-[10px] font-black text-violet-500">ESCORT REQUEST</p>
           <p className="text-[8px] text-white">Union Station</p>
@@ -48,7 +48,7 @@ const TorontoSafetyMap: React.FC = () => {
       </div>
 
       <div className="absolute top-[28%] left-[64%] group/marker">
-        <div className="w-3 h-3 bg-amber-400 rounded-full ring-4 ring-amber-400/25 relative"></div>
+        <div className="w-3 h-3 bg-white rounded-full ring-4 ring-white/30 relative"></div>
         <div className="absolute left-6 top-1/2 -translate-y-1/2 bg-slate-900 border border-slate-700 px-3 py-1 rounded-lg opacity-0 group-hover/marker:opacity-100 transition-opacity whitespace-nowrap z-10">
           <p className="text-[10px] font-black text-amber-300">HARASSMENT</p>
           <p className="text-[8px] text-white">Distillery District</p>
@@ -57,35 +57,40 @@ const TorontoSafetyMap: React.FC = () => {
 
       {/* More downtown markers to reflect higher activity */}
       {[
-        { top: 37.5, left: 41.2, label: 'FOLLOWING', color: 'bg-rose-400', ring: 'ring-rose-400/25', place: 'Eaton Centre' },
-        { top: 21.8, left: 46.6, label: 'HARASSMENT', color: 'bg-amber-400', ring: 'ring-amber-400/25', place: 'Yorkville' },
-        { top: 31.4, left: 53.2, label: 'ESCORT', color: 'bg-violet-400', ring: 'ring-violet-400/25', place: 'PATH' },
-        { top: 45.2, left: 59.1, label: 'INTOX', color: 'bg-emerald-400', ring: 'ring-emerald-400/25', place: 'St. Lawrence' },
-        { top: 53.6, left: 29.5, label: 'FOLLOWING', color: 'bg-rose-500', ring: 'ring-rose-500/25', place: 'Harbourfront' },
-        { top: 17.4, left: 33.8, label: 'ASSAULT', color: 'bg-rose-500', ring: 'ring-rose-500/30', place: 'Kensington' },
-        { top: 58.9, left: 51.6, label: 'ESCORT', color: 'bg-violet-500', ring: 'ring-violet-500/25', place: 'Exhibition' },
-        { top: 25.2, left: 23.7, label: 'HARASSMENT', color: 'bg-amber-500', ring: 'ring-amber-500/25', place: 'Little Italy' },
-        { top: 63.3, left: 43.1, label: 'INTOX', color: 'bg-emerald-400', ring: 'ring-emerald-400/25', place: 'Billy Bishop' },
-        { top: 41.7, left: 67.4, label: 'FOLLOWING', color: 'bg-rose-400', ring: 'ring-rose-400/25', place: 'Leslieville' },
-        { top: 47.5, left: 71.1, label: 'HARASSMENT', color: 'bg-amber-400', ring: 'ring-amber-400/25', place: 'Riverside' },
-        { top: 33.1, left: 15.6, label: 'ESCORT', color: 'bg-violet-400', ring: 'ring-violet-400/25', place: 'Trinity Bellwoods' },
-        { top: 55.8, left: 65.2, label: 'ASSAULT', color: 'bg-rose-500', ring: 'ring-rose-500/25', place: 'Corktown' },
-        { top: 19.5, left: 57.2, label: 'HARASSMENT', color: 'bg-amber-400', ring: 'ring-amber-400/25', place: 'Rosedale' },
-        { top: 61.4, left: 23.3, label: 'FOLLOWING', color: 'bg-rose-500', ring: 'ring-rose-500/25', place: 'Fort York' },
-        { top: 45.1, left: 37.2, label: 'INTOX', color: 'bg-emerald-400', ring: 'ring-emerald-400/25', place: 'Chinatown' },
-      ].map((m, idx) => (
+        { top: 37.5, left: 41.2, label: 'FOLLOWING', color: 'bg-white', ring: 'ring-white/30', place: 'Eaton Centre' },
+        { top: 21.8, left: 46.6, label: 'HARASSMENT', color: 'bg-white', ring: 'ring-white/30', place: 'Yorkville' },
+        { top: 31.4, left: 53.2, label: 'ESCORT', color: 'bg-white', ring: 'ring-white/30', place: 'PATH' },
+        { top: 45.2, left: 59.1, label: 'INTOX', color: 'bg-white', ring: 'ring-white/30', place: 'St. Lawrence' },
+        { top: 53.6, left: 29.5, label: 'FOLLOWING', color: 'bg-white', ring: 'ring-white/30', place: 'Harbourfront' },
+        { top: 17.4, left: 33.8, label: 'ASSAULT', color: 'bg-white', ring: 'ring-white/30', place: 'Kensington' },
+        { top: 58.9, left: 51.6, label: 'ESCORT', color: 'bg-white', ring: 'ring-white/30', place: 'Exhibition' },
+        { top: 25.2, left: 23.7, label: 'HARASSMENT', color: 'bg-white', ring: 'ring-white/30', place: 'Little Italy' },
+        { top: 63.3, left: 43.1, label: 'INTOX', color: 'bg-white', ring: 'ring-white/30', place: 'Billy Bishop' },
+        { top: 41.7, left: 67.4, label: 'FOLLOWING', color: 'bg-white', ring: 'ring-white/30', place: 'Leslieville' },
+        { top: 47.5, left: 71.1, label: 'HARASSMENT', color: 'bg-white', ring: 'ring-white/30', place: 'Riverside' },
+        { top: 33.1, left: 15.6, label: 'ESCORT', color: 'bg-white', ring: 'ring-white/30', place: 'Trinity Bellwoods' },
+        { top: 55.8, left: 65.2, label: 'ASSAULT', color: 'bg-white', ring: 'ring-white/30', place: 'Corktown' },
+        { top: 19.5, left: 57.2, label: 'HARASSMENT', color: 'bg-white', ring: 'ring-white/30', place: 'Rosedale' },
+        { top: 61.4, left: 23.3, label: 'FOLLOWING', color: 'bg-white', ring: 'ring-white/30', place: 'Fort York' },
+        { top: 45.1, left: 37.2, label: 'INTOX', color: 'bg-white', ring: 'ring-white/30', place: 'Chinatown' },
+      ].map((m, idx) => {
+        const haloColors = ['bg-red-700/40', 'bg-orange-600/35', 'bg-emerald-600/35'];
+        const halo = haloColors[idx % haloColors.length];
+        return (
         <div
           key={idx}
           className="absolute group/marker"
           style={{ top: `${m.top}%`, left: `${m.left}%` }}
         >
-          <div className={`w-3 h-3 ${m.color} rounded-full ring-4 ${m.ring} relative`}></div>
+          <div className={`absolute -left-6 -top-6 w-16 h-16 ${halo} rounded-full blur-[18px] opacity-85 pointer-events-none`}></div>
+          <div className={`w-3 h-3 ${m.color} rounded-full ring-4 ring-white/30 relative`}></div>
           <div className="absolute left-6 top-1/2 -translate-y-1/2 bg-slate-900 border border-slate-700 px-3 py-1 rounded-lg opacity-0 group-hover/marker:opacity-100 transition-opacity whitespace-nowrap z-10">
             <p className="text-[10px] font-black text-white">{m.label}</p>
             <p className="text-[8px] text-white">{m.place}</p>
           </div>
         </div>
-      ))}
+      );
+      })}
 
       {/* Map UI Overlay */}
       <div className="absolute bottom-6 left-6 flex flex-col gap-2">

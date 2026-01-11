@@ -4,6 +4,7 @@ const incidentSchema = new mongoose.Schema({
   userPhone: { type: String, required: true },
   message: { type: String, required: true },
   timestamp: { type: Date, default: Date.now },
+  locationHint: { type: String },
   location: {
     type: { type: String, enum: ['Point'], default: 'Point' },
     coordinates: { type: [Number], default: [-79.8711, 43.2557] }

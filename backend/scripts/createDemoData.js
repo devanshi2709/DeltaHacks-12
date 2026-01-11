@@ -47,7 +47,7 @@ async function createDemoData() {
   
   await Volunteer.insertMany(volunteers);
   console.log('✅ Created 3 volunteers');
-  
+
   // Create realistic incidents over past 30 days
   const crisisMessages = [
     { msg: "Someone is following me from Main St", cat: 'following', urg: 9 },
@@ -67,6 +67,19 @@ async function createDemoData() {
     { msg: "Walked past same person 3 times", cat: 'following', urg: 8 }
   ];
   
+  const torontoSpots = [
+    { hint: 'Queen & Spadina • Downtown Toronto', coords: [-79.3973, 43.6487] },
+    { hint: 'King & Bay • Financial District', coords: [-79.3817, 43.6481] },
+    { hint: 'Dundas & Yonge • Eaton Centre', coords: [-79.3802, 43.6561] },
+    { hint: 'Front & York • Union Station', coords: [-79.3811, 43.6456] },
+    { hint: 'Bathurst & King • Fashion District', coords: [-79.4022, 43.6436] },
+    { hint: 'Bloor & Yonge • Yorkville', coords: [-79.3854, 43.6705] },
+    { hint: 'Harbourfront • Queens Quay', coords: [-79.3821, 43.6396] },
+    { hint: 'Ossington & Queen • West Queen West', coords: [-79.4222, 43.6437] },
+    { hint: 'Kensington Market', coords: [-79.4005, 43.6541] },
+    { hint: 'Rosedale', coords: [-79.3839, 43.6767] }
+  ];
+
   const incidents = [];
   const now = Date.now();
   
@@ -77,9 +90,7 @@ async function createDemoData() {
     const hoursAgo = Math.floor(Math.random() * 24);
     const timestamp = new Date(now - (daysAgo * 24 * 60 * 60 * 1000) - (hoursAgo * 60 * 60 * 1000));
     
-    // More incidents on Fridays/Saturdays 10pm-2am
-    let dayOfWeek = timestamp.getDay();
-    let hour = timestamp.getHours();
+    const spot = torontoSpots[Math.floor(Math.random() * torontoSpots.length)];
     
     incidents.push({
       userPhone: `+1555555${String(i).padStart(4, '0')}`,
@@ -90,11 +101,12 @@ async function createDemoData() {
       emotion: crisis.urg >= 8 ? 'fear' : (crisis.urg >= 6 ? 'concern' : 'calm'),
       status: i < 5 ? 'pending' : (i < 10 ? 'dispatched' : 'resolved'),
       policeInvolved: Math.random() < 0.09, // 9% police involvement
+      locationHint: spot.hint,
       location: {
         type: 'Point',
         coordinates: [
-          -79.8711 + (Math.random() - 0.5) * 0.02,
-          43.2557 + (Math.random() - 0.5) * 0.02
+          spot.coords[0] + (Math.random() - 0.5) * 0.01,
+          spot.coords[1] + (Math.random() - 0.5) * 0.01
         ]
       }
     });
