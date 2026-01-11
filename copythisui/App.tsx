@@ -64,6 +64,8 @@ const App: React.FC = () => {
   const [acceptedDispatch, setAcceptedDispatch] = useState<any>(null);
   const [volunteerDistance, setVolunteerDistance] = useState(2.4);
   const [volunteerTab, setVolunteerTab] = useState<'feed' | 'map' | 'history'>('feed');
+  const [activeMissionId, setActiveMissionId] = useState<string | null>(null);
+  const [incidentStatuses, setIncidentStatuses] = useState<Record<string, string>>({});
   const [activeView, setActiveView] = useState<ViewMode>('live');
   const [showFakeCall, setShowFakeCall] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -82,6 +84,14 @@ const App: React.FC = () => {
       return () => clearInterval(interval);
     }
   }, [acceptedDispatch, volunteerDistance]);
+
+  useEffect(() => {
+    if (acceptedDispatch?.incident?._id) {
+      setActiveMissionId(acceptedDispatch.incident._id);
+      setIncidentStatuses((prev) => ({ ...prev, [acceptedDispatch.incident._id]: 'accepted' }));
+      setVolunteerTab('map');
+    }
+  }, [acceptedDispatch]);
 
   const loadData = async () => {
     try {
@@ -294,25 +304,21 @@ const App: React.FC = () => {
     setLiveAnalysis(analysis);
     setIsAnalyzing(false);
 
-    if (analysis.urgency >= 8) {
-      const volunteer = volunteers[0] || { name: 'Sarah Martinez' };
-      setAcceptedDispatch({
-        incident: {
-          _id: Date.now().toString(),
-          userPhone: '+16478715609',
-          message: userInput,
-          category: analysis.category,
-          urgency: analysis.urgency,
-          emotion: analysis.emotion,
-          status: 'dispatched',
-          timestamp: new Date().toISOString(),
-          policeInvolved: analysis.policeNeeded,
-        },
-        volunteer: volunteer.name,
-        eta: analysis.urgency === 10 ? '2 min' : '4 min',
-        action: 'DISPATCH_IMMEDIATE',
-      });
-      setVolunteerDistance(analysis.urgency === 10 ? 1.5 : 2.4);
+    if (analysis.recommendedAction === 'dispatch_immediate' || analysis.urgency >= 8) {
+      const newIncident: Incident = {
+        _id: Date.now().toString(),
+        userPhone: '+16478715609',
+        message: userInput,
+        category: analysis.category,
+        urgency: analysis.urgency,
+        emotion: analysis.emotion,
+        status: 'open',
+        timestamp: new Date().toISOString(),
+        policeInvolved: analysis.policeNeeded,
+      };
+      setIncidents((prev) => [newIncident, ...prev]);
+      setIncidentStatuses((prev) => ({ ...prev, [newIncident._id]: 'open' }));
+      setVolunteerTab('feed');
     }
 
     try {
@@ -357,6 +363,31 @@ const App: React.FC = () => {
     }
   };
 
+  const statusForIncident = (inc: Incident) => incidentStatuses[inc._id] || inc.status;
+
+  const handleVolunteerAction = (id: string, newStatus: string) => {
+    setIncidentStatuses((prev) => ({ ...prev, [id]: newStatus }));
+    const targetIncident = incidents.find((i) => i._id === id);
+    if (newStatus === 'accepted') {
+      if (targetIncident) {
+        const volunteer = volunteers[0] || { name: 'Sarah M.' };
+        setAcceptedDispatch({
+          incident: targetIncident,
+          volunteer: volunteer.name,
+          eta: targetIncident.urgency >= 9 ? '2 min' : '4 min',
+          action: 'DISPATCH_IMMEDIATE',
+        });
+        setActiveMissionId(id);
+        setVolunteerTab('map');
+        setVolunteerDistance(targetIncident.urgency >= 9 ? 1.5 : 2.4);
+      }
+    }
+    if (newStatus === 'resolved') {
+      if (activeMissionId === id) setActiveMissionId(null);
+      if (acceptedDispatch?.incident?._id === id) setAcceptedDispatch(null);
+    }
+  };
+
   const policeInvolved = incidents.filter((i) => i.policeInvolved).length;
   const communityResolved = incidents.length - policeInvolved;
   const communityPercent = incidents.length > 0 ? Math.round((communityResolved / incidents.length) * 100) : 100;
@@ -364,6 +395,8 @@ const App: React.FC = () => {
   const dayOfWeek = now.getDay();
   const hour = now.getHours();
   const isHighRiskTime = (dayOfWeek === 5 || dayOfWeek === 6) && hour >= 22;
+  const activeMission = acceptedDispatch?.incident || incidents.find((i) => i._id === activeMissionId) || null;
+  const resolvedIncidents = incidents.filter((i) => statusForIncident(i) === 'resolved');
 
   const personaNav: { id: ViewMode; label: string; icon: string }[] = [
     { id: 'live', label: 'SMS + Volunteer', icon: '📱' },
@@ -565,157 +598,211 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              {/* Volunteer Phone (matches codeThisUI style) */}
+              {/* Volunteer Phone (Sarah's app from codeThisUI) */}
               <div className="flex justify-center">
-                <div className="relative w-full max-w-[380px] h-[760px] bg-[#0b0b0f] rounded-[3rem] border-[12px] border-zinc-900 shadow-[0_20px_60px_rgba(0,0,0,0.6)] overflow-hidden">
+                <div className="relative w-full max-w-[380px] h-[780px] bg-[#09090b] rounded-[3.5rem] border-[12px] border-zinc-900 shadow-[0_20px_60px_rgba(0,0,0,0.6)] overflow-hidden">
                   <div className="absolute top-3 left-1/2 -translate-x-1/2 w-24 h-2 bg-black/60 rounded-full"></div>
                   <div className="h-full flex flex-col">
-                    <div className="px-6 py-5 border-b border-white/5 flex items-center justify-between bg-black/70 backdrop-blur">
+                    {/* Volunteer Header */}
+                    <header className="px-6 py-8 border-b border-white/5 flex items-center justify-between shrink-0 bg-[#09090b]/80 backdrop-blur-md z-50">
                       <div>
-                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-500">SafetyNet Responder</p>
-                        <p className="text-lg font-black flex items-center gap-2">
-                          {volunteers[0]?.name || 'On Duty'}
-                          <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
+                        <h1 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600 mb-1">SafetyNet Responder</h1>
+                        <p className="text-sm font-bold flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                          {volunteers[0]?.name || 'Sarah M.'} (Online)
                         </p>
                       </div>
-                      <div className="px-3 py-1 rounded-full bg-zinc-900 border border-white/10 text-[10px] font-black uppercase tracking-[0.2em] text-violet-200">
-                        Mesh Active
-                      </div>
-                    </div>
-
-                    <div className="flex-1 overflow-y-auto p-5 space-y-4 no-scrollbar">
-                      {/* Tabs */}
-                      <div className="flex items-center justify-between mb-1">
-                        <div className="flex gap-2 bg-zinc-900 border border-white/5 rounded-full p-1">
-                          {(['feed', 'map', 'history'] as const).map((tab) => (
-                            <button
-                              key={tab}
-                              onClick={() => setVolunteerTab(tab)}
-                              className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest ${
-                                volunteerTab === tab ? 'bg-white text-black shadow' : 'text-zinc-400'
-                              }`}
-                            >
-                              {tab === 'feed' ? 'Queue' : tab === 'map' ? 'Map' : 'History'}
-                            </button>
-                          ))}
+                      <div className="flex gap-2">
+                        <div className="bg-zinc-900 px-3 py-1.5 rounded-xl border border-white/5 flex items-center gap-2">
+                          <span className="text-[10px] font-black text-violet-400">MESH: ACTIVE</span>
                         </div>
-                        <span className="text-[10px] text-zinc-500">Live</span>
                       </div>
+                    </header>
 
+                    {/* Main Content */}
+                    <div className="flex-1 overflow-y-auto p-6 no-scrollbar">
                       {volunteerTab === 'feed' && (
-                        <div className="space-y-4">
-                          <div className="bg-white/5 border border-white/10 rounded-[2rem] p-5 space-y-3">
-                            <div className="flex justify-between items-center">
-                              <p className="text-[10px] font-black uppercase tracking-widest text-violet-300">Live Queue</p>
-                              <span className="text-[10px] text-zinc-400">{incidents.slice(0, 4).length} nearby</span>
-                            </div>
-                            <div className="space-y-3">
-                              {incidents.slice(0, 4).map((inc) => (
-                                <div key={inc._id} className="bg-zinc-900 border border-white/10 rounded-2xl p-3">
-                                  <div className="flex items-center gap-2 mb-1">
-                                    <span
-                                      className={`px-2 py-0.5 rounded-full text-[10px] font-black bg-gradient-to-r ${
-                                        categoryColors[inc.category] || categoryColors.other
-                                      } text-white`}
-                                    >
-                                      {inc.category.replace('_', ' ')}
-                                    </span>
-                                    <span
-                                      className={`px-2 py-0.5 rounded-full text-[10px] font-black ${
-                                        inc.urgency >= 8 ? 'bg-red-600 text-white animate-pulse' : 'bg-amber-500 text-black'
-                                      }`}
-                                    >
-                                      {inc.urgency}/10
-                                    </span>
+                        <div className="space-y-6 animate-in slide-in-from-bottom-4 duration-500">
+                          <div className="flex justify-between items-center">
+                            <h2 className="text-[11px] font-black uppercase tracking-widest text-violet-500">Live Queue</h2>
+                            <span className="text-[10px] font-bold text-zinc-500">
+                              {
+                                incidents.filter((inc) => {
+                                  const st = statusForIncident(inc);
+                                  return st === 'open' || st === 'pending' || (st === 'accepted' && inc._id !== activeMissionId);
+                                }).length
+                              }{' '}
+                              Nearby
+                            </span>
+                          </div>
+
+                          <div className="space-y-4">
+                            {incidents
+                              .filter((inc) => {
+                                const st = statusForIncident(inc);
+                                return st === 'open' || st === 'pending' || (st === 'accepted' && inc._id !== activeMissionId);
+                              })
+                              .map((incident) => (
+                                <div
+                                  key={incident._id}
+                                  className="bg-zinc-900 border border-white/10 rounded-[2rem] p-6 space-y-5 shadow-2xl relative overflow-hidden group hover:border-violet-500/50 transition-all"
+                                >
+                                  {incident.urgency >= 8 && (
+                                    <div className="absolute top-0 right-0 p-4">
+                                      <span className="px-3 py-1 bg-rose-500/10 text-rose-500 text-[10px] font-black rounded-full border border-rose-500/20 animate-pulse">
+                                        URG {incident.urgency}
+                                      </span>
+                                    </div>
+                                  )}
+
+                                  <div className="flex gap-5">
+                                    <div className="w-14 h-14 rounded-2xl bg-zinc-800 flex items-center justify-center text-2xl shrink-0 group-hover:scale-110 transition-transform">
+                                      {incident.category?.includes('follow') ? '👣' : '🚶‍♀️'}
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-[10px] font-black uppercase text-zinc-500 tracking-widest mb-1">
+                                        {incident.category.replace('_', ' ')}
+                                      </p>
+                                      <p className="text-base font-black truncate">{incident.userPhone || 'SafetyNet User'}</p>
+                                      <p className="text-[11px] text-zinc-400 mt-2 line-clamp-2 italic leading-relaxed font-medium">"{incident.message}"</p>
+                                    </div>
                                   </div>
-                                  <p className="text-[12px] text-zinc-200 leading-tight">"{inc.message}"</p>
-                                  <p className="text-[9px] text-zinc-500 uppercase tracking-widest mt-1">
-                                    {new Date(inc.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                  </p>
+
+                                  <button
+                                    onClick={() => handleVolunteerAction(incident._id, 'accepted')}
+                                    className="w-full bg-violet-600 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-violet-500 transition-all active:scale-95 shadow-xl shadow-violet-600/20"
+                                  >
+                                    Accept Dispatch
+                                  </button>
                                 </div>
                               ))}
-                              {incidents.length === 0 && (
-                                <div className="text-[11px] text-zinc-500 text-center py-6 border border-dashed border-white/10 rounded-xl">
-                                  Awaiting first incident...
-                                </div>
-                              )}
-                            </div>
+                            {incidents.length === 0 && (
+                              <div className="text-[11px] text-zinc-500 text-center py-6 border border-dashed border-white/10 rounded-xl">Awaiting first incident...</div>
+                            )}
                           </div>
                         </div>
                       )}
 
                       {volunteerTab === 'map' && (
-                        <div className="bg-zinc-900 border border-white/5 rounded-[2rem] p-5 space-y-4">
-                          {acceptedDispatch ? (
+                        <div className="h-full flex flex-col space-y-6 animate-in fade-in duration-500">
+                          {activeMission ? (
                             <>
-                              <div className="flex items-start justify-between">
-                                <div>
-                                  <p className="text-[10px] font-black uppercase tracking-widest text-emerald-300">Active Mission</p>
-                                  <p className="text-xl font-black text-white">{acceptedDispatch.incident.category.replace('_', ' ')}</p>
-                                  <p className="text-[11px] text-zinc-400 mt-1 leading-snug">
-                                    "{acceptedDispatch.incident.message}"
-                                  </p>
+                              <div className="bg-zinc-900 border border-white/10 rounded-[2rem] p-6 space-y-4">
+                                <div className="flex justify-between items-start">
+                                  <div>
+                                    <p className="text-[10px] font-black text-violet-500 uppercase tracking-widest">Active Mission</p>
+                                    <h3 className="text-xl font-black">{activeMission.category.replace('_', ' ')}</h3>
+                                  </div>
+                                  <div className="text-right">
+                                    <p className="text-[10px] font-black text-zinc-500 uppercase">ETA</p>
+                                    <p className="text-lg font-black text-white">{Math.ceil(volunteerDistance * 2.5)} MIN</p>
+                                  </div>
                                 </div>
-                                <div className="text-right">
-                                  <p className="text-[10px] font-black text-zinc-500 uppercase">ETA</p>
-                                  <p className="text-lg font-black text-white">{Math.ceil(volunteerDistance * 2.5)} MIN</p>
+                                <div className="h-48 bg-zinc-800 rounded-2xl relative overflow-hidden border border-white/5">
+                                  <div
+                                    className="absolute inset-0 opacity-20"
+                                    style={{
+                                      backgroundImage:
+                                        'linear-gradient(#334155 1px, transparent 1px), linear-gradient(90deg, #334155 1px, transparent 1px)',
+                                      backgroundSize: '20px 20px',
+                                    }}
+                                  ></div>
+                                  <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 200">
+                                    <path d="M40 160 L100 120 L160 40" stroke="#7c3aed" strokeWidth="4" fill="none" strokeDasharray="10 5" className="animate-[dash_2s_linear_infinite]" />
+                                    <circle cx="40" cy="160" r="6" fill="#10b981" />
+                                    <circle cx="160" cy="40" r="8" fill="#f43f5e" className="animate-pulse" />
+                                  </svg>
+                                  <style>{`@keyframes dash { to { stroke-dashoffset: -15; } }`}</style>
+                                  <div className="absolute bottom-4 left-4 bg-black/80 backdrop-blur px-3 py-1 rounded-lg text-[9px] font-black">NAVIGATING TO USER</div>
+                                </div>
+                                <div className="grid grid-cols-2 gap-3 pt-2">
+                                  <button
+                                    onClick={() => handleVolunteerAction(activeMission._id, 'on-scene')}
+                                    className="bg-emerald-600 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest active:scale-95"
+                                  >
+                                    On Scene
+                                  </button>
+                                  <button
+                                    onClick={() => handleVolunteerAction(activeMission._id, 'resolved')}
+                                    className="bg-zinc-800 text-white py-4 rounded-2xl font-black text-xs uppercase tracking-widest active:scale-95"
+                                  >
+                                    Resolved
+                                  </button>
                                 </div>
                               </div>
-                              <div className="h-44 bg-zinc-800 rounded-2xl relative overflow-hidden border border-white/5">
-                                <div
-                                  className="absolute inset-0 opacity-20"
-                                  style={{
-                                    backgroundImage:
-                                      'linear-gradient(#334155 1px, transparent 1px), linear-gradient(90deg, #334155 1px, transparent 1px)',
-                                    backgroundSize: '20px 20px',
-                                  }}
-                                ></div>
-                                <svg className="absolute inset-0 w-full h-full" viewBox="0 0 200 200">
-                                  <path
-                                    d="M40 160 L100 120 L160 40"
-                                    stroke="#7c3aed"
-                                    strokeWidth="4"
-                                    fill="none"
-                                    strokeDasharray="10 5"
-                                    className="animate-[dash_2s_linear_infinite]"
-                                  />
-                                  <circle cx="40" cy="160" r="6" fill="#10b981" />
-                                  <circle cx="160" cy="40" r="8" fill="#f43f5e" className="animate-pulse" />
-                                </svg>
-                                <style>{`@keyframes dash { to { stroke-dashoffset: -15; } }`}</style>
-                                <div className="absolute bottom-3 left-3 bg-black/80 backdrop-blur px-3 py-1 rounded-lg text-[9px] font-black">
-                                  NAVIGATING TO USER
-                                </div>
+                              <div className="bg-zinc-900/40 p-5 rounded-2xl border border-white/5">
+                                <p className="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-3">Live User Transcript</p>
+                                <p className="text-xs italic text-zinc-400">"{activeMission.message}"</p>
                               </div>
                             </>
                           ) : (
-                            <div className="text-center text-zinc-500 text-sm py-16">No active mission</div>
+                            <div className="h-full flex flex-col items-center justify-center text-center opacity-40">
+                              <div className="w-20 h-20 bg-zinc-900 rounded-full flex items-center justify-center mb-4 text-3xl">🗺️</div>
+                              <p className="text-sm font-bold uppercase tracking-widest text-zinc-500">No Active Mission</p>
+                              <button onClick={() => setVolunteerTab('feed')} className="mt-4 text-xs font-black text-violet-500 uppercase">
+                                Back to Queue
+                              </button>
+                            </div>
                           )}
                         </div>
                       )}
 
                       {volunteerTab === 'history' && (
-                        <div className="bg-white/5 border border-white/10 rounded-[2rem] p-5 space-y-3">
-                          <p className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Mission Archive</p>
+                        <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
+                          <h2 className="text-[11px] font-black uppercase tracking-widest text-zinc-500">Mission Archive</h2>
                           <div className="space-y-3">
-                            {incidents.filter((i) => i.status === 'resolved').slice(0, 5).map((inc) => (
-                              <div key={inc._id} className="bg-zinc-900/70 border border-white/10 rounded-2xl p-3 flex items-center justify-between">
-                                <div>
-                                  <p className="text-xs font-bold text-white">{inc.category.replace('_', ' ')}</p>
-                                  <p className="text-[10px] text-zinc-500 uppercase tracking-widest">{inc.status}</p>
+                            {resolvedIncidents.map((incident) => (
+                              <div key={incident._id} className="bg-zinc-900/40 border border-white/5 rounded-2xl p-5 flex items-center justify-between">
+                                <div className="flex items-center gap-4">
+                                  <div className="text-lg opacity-60">✅</div>
+                                  <div>
+                                    <p className="text-xs font-bold">{incident.category.replace('_', ' ')}</p>
+                                    <p className="text-[9px] text-zinc-600 uppercase font-black">
+                                      {new Date(incident.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                    </p>
+                                  </div>
                                 </div>
-                                <span className="text-[10px] text-zinc-400">{new Date(inc.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                                <div className="text-[9px] font-black text-emerald-500 uppercase tracking-tighter">Verified Safe</div>
                               </div>
                             ))}
-                            {incidents.filter((i) => i.status === 'resolved').length === 0 && (
-                              <div className="text-[11px] text-zinc-500 text-center py-6 border border-dashed border-white/10 rounded-xl">
-                                No resolved incidents tonight
-                              </div>
+                            {resolvedIncidents.length === 0 && (
+                              <p className="text-center text-zinc-700 text-[10px] font-black uppercase py-20">No resolved incidents tonight</p>
                             )}
                           </div>
                         </div>
                       )}
                     </div>
+
+                    {/* Bottom Nav */}
+                    <nav className="h-20 border-t border-white/5 flex items-center justify-around px-8 bg-black/80 backdrop-blur-md shrink-0 pb-6">
+                      <button
+                        onClick={() => setVolunteerTab('feed')}
+                        className={`flex flex-col items-center gap-1.5 transition-colors ${volunteerTab === 'feed' ? 'text-violet-500' : 'text-zinc-600'}`}
+                      >
+                        <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                        <span className="text-[9px] font-black uppercase tracking-widest">Feed</span>
+                      </button>
+                      <button
+                        onClick={() => setVolunteerTab('map')}
+                        className={`flex flex-col items-center gap-1.5 transition-colors ${volunteerTab === 'map' ? 'text-violet-500' : 'text-zinc-600'}`}
+                      >
+                        <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                        </svg>
+                        <span className="text-[9px] font-black uppercase tracking-widest">Map</span>
+                      </button>
+                      <button
+                        onClick={() => setVolunteerTab('history')}
+                        className={`flex flex-col items-center gap-1.5 transition-colors ${volunteerTab === 'history' ? 'text-violet-500' : 'text-zinc-600'}`}
+                      >
+                        <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        <span className="text-[9px] font-black uppercase tracking-widest">History</span>
+                      </button>
+                    </nav>
                   </div>
                 </div>
               </div>

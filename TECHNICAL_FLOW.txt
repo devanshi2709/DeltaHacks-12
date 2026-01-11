@@ -1,0 +1,49 @@
+# SafetyNet HER - Technical Architecture & Data Flow
+
+This document outlines the end-to-end flow of the SafetyNet HER ecosystem, from initial user distress signal to community resolution and AI-driven pattern learning.
+
+## 1. The Real-Time Crisis Flow (Reactive)
+
+1.  **Signal Initiation (The User):**
+    *   **Method A:** User sends SMS (e.g., "UNSAFE", "Following me") via Twilio.
+    *   **Method B:** User taps the "911 SOS" or "Followed Mode" in the Mobile App.
+2.  **Ingestion & Analysis (The Brain):**
+    *   Twilio/App triggers an API endpoint on the Node.js Server.
+    *   Server forwards the payload to **Gemini API (gemini-3-flash-preview)**.
+    *   Gemini performs **Intent & Sentiment Analysis**:
+        - Urgency Score: 1-10
+        - Category: Stalking, Domestic Violence, Harassment
+        - Recommended Action: Immediate dispatch vs. Wellness check.
+3.  **Persistence & Discovery (The Mesh):**
+    *   The incident is stored in **MongoDB Atlas**.
+    *   A **Geospatial Query ($near)** is run against the `Volunteers` collection to find the 3 closest vetted responders (prioritizing female responders for survivor comfort).
+4.  **Dispatcher/Volunteer Notification:**
+    *   Responders receive a high-priority push notification or SMS.
+    *   The **Volunteer Dashboard** updates via WebSockets (Socket.io) with the user's live GPS track.
+5.  **Intervention:**
+    *   Volunteer accepts the dispatch.
+    *   System sends confirmation to the User: "Sarah (Volunteer) is 2 mins away. She is wearing a purple jacket."
+    *   Optional: **ElevenLabs** triggers a "Fake Out" call if requested to help the user exit the physical situation.
+6.  **Resolution:**
+    *   Volunteer confirms "User Safe".
+    *   Incident is closed and archived for pattern analysis.
+
+## 2. The Predictive Intelligence Flow (Proactive)
+
+1.  **Data Aggregation:**
+    *   Every Sunday at Midnight, the system aggregates all incident logs from the past 30 days.
+2.  **Pattern Recognition:**
+    *   Data is passed to **Gemini API (gemini-3-pro-preview)**.
+    *   Gemini identifies "Heat Windows" (e.g., "Fridays 10pm-2am near James St Station").
+3.  **Proactive Deployment:**
+    *   The system generates **Predictive Insights**.
+    *   Volunteers receive "Proactive Alerts": "High risk predicted tonight. 4 volunteers needed for walking escorts."
+4.  **Prevention:**
+    *   Responders are positioned *before* the first incident occurs, effectively outsmarting the pattern of danger.
+
+## 3. Technology Stack Summary
+- **Frontend:** React + Tailwind CSS (Mobile Simulator + Admin Dashboard)
+- **AI Brain:** Google Gemini API
+- **Communication:** Twilio (SMS/Voice), ElevenLabs (AI Voice Scripts)
+- **Database:** MongoDB Atlas (Geospatial & Log Storage)
+- **Server:** Node.js / Express (The Orchestrator)

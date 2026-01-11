@@ -1,0 +1,28 @@
+{
+  "incident_id": "SN-8829-X",
+  "timestamp": "2025-05-16T22:45:12Z",
+  "user_id_hash": "a7b8...c9d0",
+  "location": {
+    "type": "Point",
+    "coordinates": [-79.8660, 43.2570],
+    "address": "Main St & James, Beasley"
+  },
+  "signal_type": "SMS_TEXT",
+  "raw_text": "someone is following me i am scared",
+  "ai_analysis": {
+    "urgency": 9,
+    "category": "stalking",
+    "sentiment": "panic",
+    "detected_entities": ["stranger", "following"]
+  },
+  "dispatch": {
+    "volunteer_id": "v_sarah_m",
+    "response_time_seconds": 164,
+    "status": "RESOLVED_SAFE"
+  },
+  "metadata": {
+    "weather": "clear",
+    "neighborhood_event": "Art Crawl",
+    "day_of_week": "Friday"
+  }
+}
