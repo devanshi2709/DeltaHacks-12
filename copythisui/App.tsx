@@ -972,11 +972,12 @@ const App: React.FC = () => {
                         </div>
                         <button className="text-[#007AFF] text-sm font-medium opacity-0">Edit</button>
                       </div>
-                      <p className="text-[11px] font-bold text-zinc-900 leading-none">SafetyNet HER</p>
+                      <p className="text-[11px] font-bold text-zinc-900 leading-none">SafetyNet</p>
                       <div className="flex items-center gap-1 opacity-60 mt-0.5">
-                        <span className="text-[9px] text-zinc-500 font-medium">905-SAFE-HER</span>
+                        <span className="text-[9px] text-zinc-500 font-medium">905-323-SAFE</span>
                         <svg className="w-2.5 h-2.5 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M9 5l7 7-7 7" /></svg>
                       </div>
+                      <p className="text-[9px] text-zinc-500 mt-1">Location shared with Dad & Sister • stay on line</p>
                     </div>
 
                     <div className="flex-1 overflow-y-auto px-3 py-6 space-y-3 bg-white scroll-smooth no-scrollbar">
@@ -1413,13 +1414,14 @@ const App: React.FC = () => {
           {activeView === 'community' && (
             <div className="grid lg:grid-cols-12 gap-6">
               <div className="lg:col-span-7 space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                   {[
-                    { label: 'Predicted Tonight', val: 'HIGH RISK', sub: 'Beasley Hub Sector 4', color: 'text-rose-400' },
-                    { label: 'Mesh Nodes On-Duty', val: `${volunteers.filter((v) => v.onDuty).length || 0} Active`, sub: '92% Coverage', color: 'text-violet-300' },
-                    { label: 'Avg Peer Response', val: '6m 20s', sub: '12% faster than 911', color: 'text-emerald-300' },
+                    { label: 'Avg Peer Response', val: '5m 10s', sub: '50% faster than 911', color: 'text-emerald-300' },
+                    { label: 'Community Resolved', val: displayCommunityResolved, sub: `${displayCommunityPercent}% without police`, color: 'text-emerald-300' },
+                    { label: 'Police Involved', val: displayPoliceInvolved, sub: 'Flagged escalations', color: 'text-red-300' },
+                    { label: 'Volunteers on Duty', val: displayVolunteersOnDuty, sub: 'Active mesh nodes', color: 'text-violet-300' },
                   ].map((kpi, i) => (
-                    <div key={i} className="bg-white/5 border border-white/10 rounded-2xl p-4">
+                    <div key={i} className="bg-white/5 backdrop-blur border border-white/10 rounded-2xl p-4 shadow-[0_10px_30px_rgba(0,0,0,0.25)]">
                       <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-1">{kpi.label}</p>
                       <p className={`text-2xl font-black ${kpi.color}`}>{kpi.val}</p>
                       <p className="text-[11px] text-zinc-500 mt-1">{kpi.sub}</p>
@@ -1431,7 +1433,7 @@ const App: React.FC = () => {
                   <div className="flex justify-between items-center">
                     <div>
                       <p className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-300">Real-Time Risk Landscape</p>
-                      <p className="text-lg font-black text-white">Toronto Heatmap</p>
+                      <p className="text-lg font-black text-white">Toronto Hotspots: Neighbourhood Risk</p>
                     </div>
                     {isHighRiskTime && (
                       <span className="px-3 py-1 rounded-full bg-red-600/20 border border-red-500/40 text-[10px] font-black text-red-200 uppercase tracking-[0.2em] animate-pulse">
@@ -1468,8 +1470,8 @@ const App: React.FC = () => {
                 </div>
               </div>
 
-              <div className="lg:col-span-5 space-y-4">
-                <div className="bg-white/5 border border-white/10 rounded-[2rem] p-5 space-y-3 h-[420px] flex flex-col">
+              <div className="lg:col-span-5 space-y-4 lg:mt-[150px] md:mt-10 mt-8">
+                <div className="bg-white/5 border border-white/10 rounded-[2rem] p-5 space-y-3 h-[640px] flex flex-col">
                   <div className="flex items-center justify-between">
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-300">Past Incidents</p>
                     <div className="flex items-center gap-2 text-[11px] text-zinc-300">
@@ -1571,28 +1573,7 @@ const App: React.FC = () => {
                   )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-1">Live Incidents</p>
-                    <p className="text-3xl font-black">{displayLiveIncidents}</p>
-                    <p className="text-xs text-zinc-500">Last 30 entries</p>
-                  </div>
-                  <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-1">Community Resolved</p>
-                    <p className="text-3xl font-black text-emerald-400">{displayCommunityResolved}</p>
-                    <p className="text-xs text-zinc-500">{displayCommunityPercent}% without police</p>
-                  </div>
-                  <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-1">Police Involved</p>
-                    <p className="text-3xl font-black text-red-400">{displayPoliceInvolved}</p>
-                    <p className="text-xs text-zinc-500">Flagged escalations</p>
-                  </div>
-                  <div className="bg-white/5 border border-white/10 rounded-2xl p-4">
-                    <p className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 mb-1">Volunteers on Duty</p>
-                    <p className="text-3xl font-black text-violet-300">{displayVolunteersOnDuty}</p>
-                    <p className="text-xs text-zinc-500">Active mesh nodes</p>
-                  </div>
-                </div>
+                <div className="grid grid-cols-2 gap-3"></div>
               </div>
             </div>
           )}
