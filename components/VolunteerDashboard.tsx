@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MOCK_INCIDENTS, MOCK_VOLUNTEERS } from '../constants';
 import { Urgency } from '@/services/types';
@@ -20,42 +19,51 @@ const VolunteerDashboard: React.FC = () => {
             </p>
           </div>
         </div>
+
         <div className="flex gap-2">
-           <button 
-             onClick={() => setActiveTab('live')}
-             className={`px-4 py-2 rounded-lg font-medium transition ${activeTab === 'live' ? 'bg-violet-100 text-violet-700' : 'text-gray-500 hover:bg-gray-100'}`}
-           >
-             Live Response
-           </button>
-           <button 
-             onClick={() => setActiveTab('predictive')}
-             className={`px-4 py-2 rounded-lg font-medium transition ${activeTab === 'predictive' ? 'bg-violet-100 text-violet-700' : 'text-gray-500 hover:bg-gray-100'}`}
-           >
-             Predictive Insights
-           </button>
+          <button 
+            onClick={() => setActiveTab('live')}
+            className={`px-4 py-2 rounded-lg font-medium transition ${activeTab === 'live' ? 'bg-violet-100 text-violet-700' : 'text-gray-500 hover:bg-gray-100'}`}
+          >
+            Live Response
+          </button>
+          <button 
+            onClick={() => setActiveTab('predictive')}
+            className={`px-4 py-2 rounded-lg font-medium transition ${activeTab === 'predictive' ? 'bg-violet-100 text-violet-700' : 'text-gray-500 hover:bg-gray-100'}`}
+          >
+            Predictive Insights
+          </button>
         </div>
       </header>
 
       <main className="flex-1 p-8 overflow-y-auto">
         {activeTab === 'live' ? (
+          // === Live Response Section ===
           <div className="space-y-8">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               <div className="lg:col-span-2 space-y-6">
                 <h2 className="text-lg font-bold text-gray-700">Active Incidents</h2>
-                {MOCK_INCIDENTS.map(incident => (
+                {MOCK_INCIDENTS.map((incident) => (
                   <div key={incident.id} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex gap-4 hover:shadow-md transition">
                     <div className={`w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center ${
-                      incident.urgency === Urgency.CRITICAL ? 'bg-red-100 text-red-600' : 
-                      incident.urgency === Urgency.HIGH ? 'bg-orange-100 text-orange-600' : 'bg-blue-100 text-blue-600'
+                      incident.type === "harassment" ? 'bg-red-100 text-red-600' :
+                      incident.type === "following" ? 'bg-orange-100 text-orange-600' :
+                      incident.type === "domestic_violence" ? 'bg-pink-100 text-pink-600' :
+                      'bg-blue-100 text-blue-600'
                     }`}>
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                      </svg>
                     </div>
+
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="text-xs font-bold uppercase tracking-wider text-gray-400">{incident.category}</span>
-                        <span className="text-xs text-gray-400">{incident.time} • {incident.location.area}</span>
+                        <span className="text-xs font-bold uppercase tracking-wider text-gray-400">{incident.type}</span>
+                        <span className="text-xs text-gray-400">{incident.time} • {incident.locationName}</span>
                       </div>
-                      <p className="text-gray-800 font-medium mb-4">{incident.description}</p>
+                      {incident.userMessage && (
+                        <p className="text-gray-800 font-medium mb-4">{incident.userMessage}</p>
+                      )}
                       <div className="flex gap-2">
                         <button className="bg-violet-600 text-white text-xs px-4 py-2 rounded-lg font-bold hover:bg-violet-700 transition">Dispatch Volunteer</button>
                         <button className="bg-gray-100 text-gray-600 text-xs px-4 py-2 rounded-lg font-bold hover:bg-gray-200 transition">Contact User</button>
@@ -90,6 +98,7 @@ const VolunteerDashboard: React.FC = () => {
             </div>
           </div>
         ) : (
+          // === Predictive Insights Section ===
           <PredictiveLayer />
         )}
       </main>

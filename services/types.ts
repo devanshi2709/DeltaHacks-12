@@ -21,6 +21,18 @@ export interface SmsMessage {
   text: string;
   timestamp: Date;
 }
+export interface Volunteer {
+  id: string;
+  name: string;
+  skills: string[];
+  isAvailable: boolean;
+  location: {
+    lat: number;
+    lng: number;
+  };
+  gender: 'male' | 'female' | 'other';
+  rating: number;
+}
 export enum Urgency {
   LOW = 'low',
   MEDIUM = 'medium',
