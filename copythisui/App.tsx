@@ -1143,12 +1143,12 @@ const App: React.FC = () => {
                           {volunteerWakeStage === 'notif' && (
                             <div className="absolute inset-0 bg-gradient-to-br from-[#0f172a] via-[#0b1220] to-[#050910] text-white flex flex-col items-center justify-center gap-5">
                               <div className="text-center">
-                                <div className="text-5xl font-black mb-1">9:41</div>
-                                <div className="text-[11px] uppercase tracking-[0.25em] text-white/70">Wednesday, Sept 18</div>
-                              </div>
-                              
-                              {volunteerNotif && showVolunteerAlert && (
-                                <div className="animate-in slide-in-from-bottom-8 duration-700">
+                              <div className="text-5xl font-black mb-1">9:41</div>
+                              <div className="text-[11px] uppercase tracking-[0.25em] text-white/70">Wednesday, Sept 18</div>
+                            </div>
+                            
+                            {volunteerNotif && showVolunteerAlert && (
+                                <div className="animate-in slide-in-from-bottom-8 duration-700 animate-[shake_0.5s_ease-in-out]">
                                   <div className="bg-red-500/20 border border-red-400/40 text-red-100 rounded-2xl px-5 py-4 text-left shadow-xl shadow-red-500/10 relative max-w-[300px]">
                                     <div className="flex items-center gap-3 mb-2">
                                       <div className="w-8 h-8 rounded-full bg-red-500/30 flex items-center justify-center">
@@ -1199,13 +1199,13 @@ const App: React.FC = () => {
                       {!volunteerLocked && (
                         <>
                           <header className="px-6 py-8 border-b border-white/5 flex items-center justify-between shrink-0 bg-[#09090b]/80 backdrop-blur-md z-50">
-                            <div>
-                              <h1 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600 mb-1">SafetyNet Responder</h1>
-                              <p className="text-sm font-bold flex items-center gap-2">
-                                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                                {volunteers[0]?.name || 'Sarah M.'} (Online)
-                              </p>
-                            </div>
+                      <div>
+                        <h1 className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-600 mb-1">SafetyNet Responder</h1>
+                        <p className="text-sm font-bold flex items-center gap-2">
+                          <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                          {volunteers[0]?.name || 'Volunteer'} (Online)
+                        </p>
+                      </div>
                             <div className="flex gap-2">
                               <div className="bg-zinc-900 px-3 py-1.5 rounded-xl border border-white/5 flex items-center gap-2">
                                 <span className="text-[10px] font-black text-violet-400">MESH: ACTIVE</span>
@@ -1473,7 +1473,7 @@ const App: React.FC = () => {
               </div>
 
               <div className="lg:col-span-5 space-y-4 lg:mt-[150px] md:mt-10 mt-8">
-                <div className="bg-white/5 border border-white/10 rounded-[2rem] p-5 space-y-3 h-[640px] flex flex-col">
+                <div className="bg-white/5 border border-white/10 rounded-[2rem] p-5 space-y-3 h-[900px] flex flex-col">
                   <div className="flex items-center justify-between">
                     <p className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-300">Past Incidents</p>
                     <div className="flex items-center gap-2 text-[11px] text-zinc-300">
