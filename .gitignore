@@ -1,0 +1,5 @@
+node_modules/
+backend/call.mp3
+.env
+*.log
+.DS_Store
