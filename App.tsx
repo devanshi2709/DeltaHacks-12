@@ -68,7 +68,16 @@ const App: React.FC = () => {
 
         {/* Intelligence & Dispatch Column (The Dashboard) */}
         <div className="flex-1 min-w-0 h-full animate-in fade-in slide-in-from-right-4 duration-1000 [animation-delay:200ms]">
-          <VolunteerDashboard />
+        <div className="mb-4 flex justify-end">
+          <button
+            onClick={() => setIsFakeCallActive(true)}
+            className="bg-violet-600 hover:bg-violet-500 text-white px-6 py-3 rounded-2xl font-black text-xs uppercase tracking-widest shadow-xl active:scale-95 transition"
+          >
+            📞 CALL ME
+          </button>
+        </div>
+
+        <VolunteerDashboard />
         </div>
       </div>
 
