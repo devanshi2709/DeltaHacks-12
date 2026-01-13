@@ -294,7 +294,7 @@ Built at **DeltaHacks 12** by:
 - **Sansa Malhotra** - Full Stack Development, AI Analysis Engine, Backend Architecture
 - **Haifa** - UI/UX Design, Frontend Development
 - **Ananya** - Community Intelligence, Predictive Analytics
-- **Devanshi** - Product Strategy, User Research
+- **Devanshi** - Product Strategy, User Research, API Integration
 
 ---
 
@@ -350,6 +350,10 @@ MIT License - see [LICENSE](LICENSE) for details
 - GitHub: [@sansitamalhotra](https://github.com/sansitamalhotra)
 - LinkedIn: [Sansa Malhotra](https://linkedin.com/in/sansita-malhotra)
 - Email: sansita.malhotra@mail.utoronto.ca
+
+**Devanshi Makkar**
+- LinkedIn: [Devanshi Makkar].(https://www.linkedin.com/in/devanshi-makkar)
+- Email: devanshi.makkar@mail.utoronto.ca
 
 ---
 
